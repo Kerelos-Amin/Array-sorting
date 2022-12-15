@@ -1,1 +1,62 @@
-.
+
+.MODEL SMALL
+.STACK 100H
+.DATA
+
+MESSAGE1 DB 'ENTER UP TO 10 ELEMENTS : $' 
+MESSAGE2 DB 'AFTER SORTING : $'
+MESSAGE3 DB 'PRESS : 1-FOR DESCENDING ORDER  2-FOR ASCENDING ORDER  $'
+MESSAGE4 DB 'INVALID NUMBER $'
+MESSAGE5 DB 'PRESS : 1-FOR BUBBLE SORTING  2-FOR SELECTION SORTING 3- QUICK SORT $'
+MESSAGE6 DB 'YOU MUST ENTER ELEMENTS FIRST $'
+ 
+ 
+ARR DB 10 dup (0) 
+ 
+ i db  ? 
+ j db  ?
+ left db  0                           
+ right db  ?  ;this will be the index of thr right(last) element                         
+ q db  ?      ;this equal the return value from parttion
+ x db  ?      ;this will carry the value of arr[right]
+
+.CODE  
+  
+ 
+MAIN PROC
+    MOV AX,@DATA
+    MOV DS,AX 
+       
+    CALL NEW_LINE
+    MOV AH,9       ;DISPLAY MESSAGE
+    lea DX,MESSAGE1
+    INT 21H
+    MOV CX,0 
+    ;FILLING ARRAY
+    MOV AH,1 ;FIRST INPUT
+    INT 21H
+    MOV SI,0
+    WHILE_:
+        CMP AL,0DH      ;COMPARE INPUT WITH CR ;ENTER BUTTON
+        JE END_WHILE    ;IF EQUAL JMP TO END_WHILE
+        MOV ARR[SI],AL ;MOVE INPUT INTO ARRAY
+        INC SI          ;SI+=1
+        INC CX
+        CMP CX,10
+        JE END_WHILE
+        CALL PRINT_SPACE
+        MOV AH,1
+        INT 21H
+                
+    JMP WHILE_          ;JMP WHILE_ TO CONTINUE ENTER THE INPUTS
+    END_WHILE:
+    CALL NEW_LINE
+    JCXZ NO_INPUTS_MESSAGE ;IF CX == 0 JMP NO_INPUTS_MESSAGE LABLE (THIS CONDITION IF NO INPUTS ENTERED) 
+    
+    LEA SI,ARR ;OFFSET OF ARRAY INTO SI
+    MOV BX,CX 
+    
+    MOV right,Cl ;mov the number of elements into thr r variable
+    DEC right    ;decrement to get index of the last(right) element of the array
+    
+    PUSH CX ;push number of elements
