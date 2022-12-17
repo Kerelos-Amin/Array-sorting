@@ -161,3 +161,57 @@ MAIN PROC
     JMP PRINT_ARRAY     ;AFTER THE CALL OF THE PROCEDURE JMP TO PRINT_ARRAY
     
     
+;================================================== 
+    
+    
+ ;=======================================================
+      
+    ;PRINT AFTER SORTING
+    PRINT_ARRAY:
+    POP CX         ;POP THE NUMBER OF ELEMENTS FROM THE STACK INTO CX THAT U PUSHED IT ABOVE
+    CALL NEW_LINE 
+        
+    MOV AH,9
+    LEA DX,MESSAGE2     ;print message3
+    INT 21H 
+    
+    
+    MOV SI,0              ;START FROM INDEX 0
+    PRINT_SORTED_ARRAY:
+        MOV AH,2
+        MOV DL,ARR[SI]   ;PRINT ARR[SI]
+        INT 21H
+        MOV DL,' '       ;PRINT SPACE
+        INT 21H
+        INC SI           ;INC SI FOR THE NEXT ELEMENT
+        LOOP PRINT_SORTED_ARRAY
+    JMP EXIT
+;====================================        
+    NO_INPUTS_MESSAGE:
+        MOV AH,9
+        LEA DX,MESSAGE6     ;print message6
+        INT 21H
+        CALL MAIN         ;CALL MAIN AGAIN 
+        
+;====================================         
+    EXIT:
+        MOV AH,4CH   ;END PROGRAM
+        INT 21H
+        MAIN ENDP
+
+
+;==========================================================
+
+BUBBLE_ASCENDING_SORT PROC
+   ;THIS PROCEDURE WILL SORT THE ARRAY IN ASCENDING ORDER
+   ;INPUT : SI=OFFSET ADDRESS OF THE ARRAY
+   ;      : BX=ARRAY SIZE
+   PUSH AX
+	@@ -189,69 +214,69 @@ BUBBLE_DESCENDING_SORT PROC
+   PUSH SI
+   
+   MOV AX,SI
+   MOV DX,CX    ; NUMBER OF ELEMENTS INTO DX
+
+  DEC CX       ;CUZ THE BUBBLE LOOP THE NUMBER OF ELEMENTS-1 ; for i = 0; i < n-1; i++         
+  JCXZ BUBBLESORT_END     ;IF THERE IS ONE ELEMENT IN THE ARRAY EXIT THE PROCEDURE 
