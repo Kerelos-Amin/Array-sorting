@@ -215,3 +215,58 @@ BUBBLE_ASCENDING_SORT PROC
 
   DEC CX       ;CUZ THE BUBBLE LOOP THE NUMBER OF ELEMENTS-1 ; for i = 0; i < n-1; i++         
   JCXZ BUBBLESORT_END     ;IF THERE IS ONE ELEMENT IN THE ARRAY EXIT THE PROCEDURE 
+                      
+  @OUTER_LOOP1:
+      PUSH DX             ; PUSH INTO STACK FOR LATER USAGE. 
+      MOV BX,CX           ;THE COUNTER OF INNER LOOP IS THE SAME AS OUTER LOOP         
+      MOV SI,AX           ;SET SI=AX (IN EACH LOOP IN OUTER LOOP SET SI THE BEGINNIG OFFSET OF THE AARAY)
+      MOV DI,AX           ;SET DI=AX
+      INC DI              ;SET DI=DI+1 TO GET THE NEXT ELEMENT
+      @INNER_LOOP1:        
+          MOV DL,[SI]       
+          CMP DL,[DI]     ;COMPARE DL WITH [DI]
+          JNG @NOT_SWAP1   ;JMP IF DL<=[DI] ([DI] IS GREATER THAN [SI] )
+          XCHG DL,[DI]    ;IF DL > [DI] EXCHANGE THE VALUE OF DL AND [DI]
+          MOV [SI],DL
+          @NOT_SWAP1:
+          INC SI 
+          INC DI    ;INC SI AND DI TO GET THE NEXT ELEMENTS
+          DEC BX    ;DEC THE INNER COUNTRT TILL IT EQUAL 0
+      JNZ @INNER_LOOP1 ;JMP IF BX!=0  
+      ;IF BX==0 THIS MEANS THE INNER LOOP HAS ENDED 
+      ;======================================
+        POP DX      ;GET THE NUMBER OF ELEMENTS 
+        PUSH CX     ;PUSH THE OUTER LOOP COUNTER FOR LATER USAGE
+        PUSH AX     ;PUSH AX CUZ IT CONTAIN THE ADDRES OF THE ARRAY       
+        MOV CX,DX   ;LOAD NEW COUNTER TO PRINT THE ELEMENTS IN THE ARRAY 
+        CALL NEW_LINE                       
+        PUSH DX
+        MOV SI,0
+        PRINT_SORTED_ARRAY_:
+            MOV AH,2
+            MOV DL,ARR[SI]
+            INT 21H                             ;THIS BLOCK OF CODE TO PRINT ARRAY AFTER EACH OUTER LOOP
+            MOV DL,' '
+            INT 21H
+            INC SI
+            LOOP PRINT_SORTED_ARRAY_
+        POP DX
+        POP AX
+        POP CX ;GET BACK THE COUNTER OF THE OUTER LOOP 
+        ;====================================       
+      LOOP @OUTER_LOOP1  ;IF CX !=0 LOOP THE OUTER LOOP AGAIN TILL IT EQUAL 0
+  
+       
+  BUBBLESORT_END:
+  POP SI
+  POP DI
+  POP DX
+  POP CX                 ;END OF PROCEDURE
+  POP BX
+  POP AX
+  RET   ;RETURN TO RHE CALLING PROCEDURE
+  BUBBLE_ASCENDING_SORT ENDP
+
+   
+    
+;======================================================
