@@ -326,3 +326,72 @@ BUBBLE_DESCENDING_SORT PROC
         POP AX
         POP CX
       ;==========================================       
+
+LOOP @OUTER_LOOP2
+
+   
+  BUBBLESORT2_END:
+  POP SI
+  POP DI
+  POP DX
+  POP CX
+  POP BX
+  POP AX
+  RET   ;RETURN TO RHE CALLING PROCEDURE
+  BUBBLE_DESCENDING_SORT ENDP
+;==============================================================================
+
+
+SELECTION_ASCENDING_SORT PROC
+   ;THIS PROCEDURE WILL SORT THE ARRAY IN ASCENDING ORDER
+
+   PUSH AX
+   PUSH BX
+   PUSH CX
+   PUSH DX
+   PUSH DI
+   PUSH SI
+   MOV BX,CX
+   DEC CX
+   JCXZ SELECTION_END      ;JMP IF CX == 0, THIS FOR CONDITION IF THERE IS ONLY 1 ELEMENT IN ARRAY THEN END SORT                  
+   @OUTER_LOOP3:
+       PUSH BX             ;PUSH FOR LATER USAGE
+       MOV BX,CX           ;SET BX=CX
+       MOV DI,SI
+       INC DI              ;ADDRESS OF THE NEXT ELEMENT
+       MOV DX,0            ;INDEX OF MINMUM ELEMENT INITIALLY = 0
+ 
+       @INNER_LOOP3:      
+          MOV AL,[DI]       ; AL= [DI]
+          PUSH DI          ;PUSH DI & SI CUZ WE WILL CHANGE THIM 
+          PUSH SI            
+          ADD SI,DX        ;ADD THE INDEX OF MINUMUM ELEMENT TO SI TO GET THE ADDRESS OF MINMUM ELEMENT
+          CMP [SI],AL      ;COMPARE THE MINMUM ELEMENT TO  THE CURRENT ELEMENT
+          JNG @NOT_SWAP___   ;IF THE MINMUM ELEMENT IS STILL SMALLER JUMP TO @NOT_SWAP___ 
+          
+          POP SI           ;RETURN THE ORIGNAL SI FROM STACK
+          SUB DI,SI        ;SUBTRACT THE ADDRESS OF THE CURRENT ELEMENT FROM THE SI ADDRESS TO GET THE CURRENT ELEMENT INDEX 
+          MOV DX,DI        ;PUT THE INDEX OF THE MINIMUM ADDRESS INTO DX
+          POP DI           ;RETURN THE ORIGNAL DI FROM STACK
+          JMP @NOT_SWAP3   ;JMP TO @NOT_SWAP3          
+          
+          @NOT_SWAP___:      ;THIS LABLE IF THE MINMUM ELEMENT IS STILL SMALLER
+          POP SI           ;THEN REURN THE OERIGNAL SI & DI
+          POP DI 
+          
+          @NOT_SWAP3:
+          INC DI           ;INCREMENT DI TO COMPARE THE NEXT ELEMENT
+          DEC BX           ;DECREMENT THE COUNTER
+       JNZ @INNER_LOOP3    ;JMP IF BX!=0 
+       
+       
+       MOV DI,SI            ;SAVE THE ADDRESS OF THE OUTER LOOP ELEMENT FOR LATER USAGE
+       
+       ADD  SI,DX
+       MOV  AL,[SI]         ;AL=ARR[DX] 
+       XCHG [DI],AL        ;THIS BLOCK OF CODE IS TO PUT THE MINIMUM VALUE TO THE CORRECT INDEX
+       MOV  [SI],AL
+       MOV  SI,DI          ;GET BACK THE ADDRESS OF SI 
+       INC  SI             ;INC SI TO GET THE NEXT RLEMENT IN OUTER LOOP
+      ;====================================== 
+      
