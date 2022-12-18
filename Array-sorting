@@ -269,4 +269,60 @@ BUBBLE_ASCENDING_SORT PROC
 
    
     
-;======================================================
+;======================================================    
+   
+
+BUBBLE_DESCENDING_SORT PROC
+   ;THIS PROCEDURE WILL SORT THE ARRAY IN DESCENDING ORDER
+   ;INPUT : SI=OFFSET ADDRESS OF THE ARRAY
+   ;      : BX=ARRAY SIZE
+   PUSH AX
+   PUSH BX
+   PUSH CX
+   PUSH DX
+   PUSH DI
+   PUSH SI
+   
+   MOV AX,SI
+   MOV DX,CX
+   
+
+  DEC CX
+  JCXZ BUBBLESORT2_END                         
+  @OUTER_LOOP2:
+    PUSH DX
+      MOV BX,CX          
+      MOV SI,AX          
+      MOV DI,AX          
+      INC DI             
+      @INNER_LOOP2:      
+          MOV DL,[SI]    
+          CMP [DI],DL    
+          JNG @NOT_SWAP2 
+          XCHG DL,[DI]   
+          MOV [SI],DL
+          @NOT_SWAP2:
+          INC SI 
+          INC DI
+          DEC BX
+      JNZ @INNER_LOOP2 
+      ;======================================
+        POP DX
+        PUSH CX
+        PUSH AX                
+        MOV CX,DX
+        CALL NEW_LINE                                  
+        PUSH DX
+        MOV SI,0
+        PRINT_SORTED_ARRAY__:
+            MOV AH,2
+            MOV DL,ARR[SI]
+            INT 21H
+            MOV DL,' '
+            INT 21H
+            INC SI
+            LOOP PRINT_SORTED_ARRAY__
+        POP DX
+        POP AX
+        POP CX
+      ;==========================================       
