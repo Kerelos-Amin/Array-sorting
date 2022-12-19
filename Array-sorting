@@ -505,6 +505,76 @@ SELECTION_DESCENDING_SORT PROC
         POP AX
         POP CX
         POP SI
-	 ;==========================================      
+	 ;==========================================
+	 LOOP @OUTER_LOOP4                             
+   
+  SELECTION2_END:
+  POP SI
+  POP DI
+  POP DX
+  POP CX                 ;END OF PROCEDURE
+  POP BX
+  POP AX
+  RET   ;RETURN TO RHE CALLING PROCEDURE
+  SELECTION_DESCENDING_SORT ENDP
+
+;====================================  
+
+ 
+ 
+;=====================================================    
+   
+QUICK_ASCENDING_SORT PROC
+   ;THIS PROCEDURE WILL SORT THE ARRAY IN ASCENDING ORDER
+       
+        ;-----------------------------------------
+        ;QUICKSORT(A, left, right)
+        ;    if left < right
+        ;        q = QUICKSORT(A, left, right)
+        ;        QUICKSORT(A, left, q-1)
+        ;        QUICKSORT(A, q+1, right)
+
+
+
+ 
+            ;COMPARE left WITH right.
+            mov  al, left 
+            cmp  al, right                  ;COMPARE P WITH R
+            jnl  bigger1                ;IF left = right, SORT IS DONE.
+
+            ;CALL PARTITION(A, left, Right).
+            call partition
+
+            ;GET Q = PARTITION(A, left, Right).
+            mov  q, al
+
+            ;PUSH Q+1, right INTO STACK FOR LATER USAGE.
+            inc  al
+            mov  ah,0
+            push ax
+            mov  bl,right
+            mov  bh,0
+            push bx
+
+            ;CALL QUICKSORT(A, left, Q-1).
+            mov  al, q
+            mov  right, al
+            dec  right
+            call QUICK_ASCENDING_SORT
+
+            ;CALL QUICKSORT(A, Q+1, R).
+            pop  bx
+            pop  dx
+            mov right,bl
+            mov left,dl
+             
+            call QUICK_ASCENDING_SORT 
+
+            ;WHEN SORT IS DONE.
+            bigger1:
+                ret   ;RETURN TO RHE CALLING PROCEDURE
+  QUICK_ASCENDING_SORT ENDP
+
+
 	 
 	 
