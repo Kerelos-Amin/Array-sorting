@@ -395,3 +395,116 @@ SELECTION_ASCENDING_SORT PROC
        INC  SI             ;INC SI TO GET THE NEXT RLEMENT IN OUTER LOOP
       ;====================================== 
       
+
+
+        POP BX     ;GET THE NUMBER OF ELEMENTS OF THE ARRAY 
+        PUSH SI
+        PUSH CX    ;SAVE THESE REGISTERS FOR LATER USAGE
+        PUSH AX 
+        
+        MOV CX,BX   ;LOAD NEW COUNTER TO PRINT THE ELEMENTS IN THE ARRAY
+        CALL NEW_LINE                                                             
+
+        MOV SI,0                   
+        PRINT_SORTED_ARRAY___:
+            MOV AH,2
+            MOV DL,ARR[SI]            ;(THIS BLOCK OF CODE TO PRINT ARRAY AFTER EACH OUTER LOOP)
+            INT 21H
+            MOV DL,' '
+            INT 21H
+            INC SI
+            LOOP PRINT_SORTED_ARRAY___ 
+            
+            
+        POP AX
+        POP CX      ;GET BACK REGISTERS FROM STACK
+        POP SI
+      ;==========================================        
+       
+       LOOP @OUTER_LOOP3  ;LOOP THE OUTER LOOP IF CX !=0 
+   
+        
+   SELECTION_END:
+   POP SI
+   POP DI
+   POP DX
+   POP CX
+   POP BX
+   POP AX
+   RET   ;RETURN TO RHE CALLING PROCEDURE
+   SELECTION_ASCENDING_SORT ENDP
+  
+;=====================================================    
+   
+SELECTION_DESCENDING_SORT PROC
+   ;THIS PROCEDURE WILL SORT THE ARRAY IN DESCENDING ORDER
+   ;INPUT : SI=OFFSET ADDRESS OF THE ARRAY
+   ;      : BX=ARRAY SIZE
+   PUSH AX
+   PUSH BX
+   PUSH CX
+   PUSH DX
+   PUSH DI
+   PUSH SI
+   MOV BX,CX
+
+  DEC CX                    
+                            
+  JCXZ SELECTION2_END       ;JMP IF CX == 0, THIS FOR CONDITION IF THERE IS ONLY 1 ELEMENT IN ARRAY THEN END SORT              
+  @OUTER_LOOP4:
+       PUSH BX                                                                                                              
+       MOV BX,CX            ;SET BX=CX                                                                                       
+       MOV DI,SI                                                                                                             
+       INC DI               ;ADDRESS OF THE NEXT ELEMENT                                                                     
+       MOV DX,0             ;DX=0                                                                                            
+       @INNER_LOOP4:                                                                                                         
+          MOV AL,[DI]        ; AL= [DI]                                                                                      
+          CMP AL,[SI]       ;COMPARE [SI] WITH [DI] ; COMPARE THE CURRENT VALUE TO THE NEXT VALUE                            
+          JNG @NOT_SWAP4    ;JMP TO @NOT_SWAP1 IF [SI]<=[DI]    CURRENT < NEXT                                               
+          PUSH DI           ;IF NOT PUSH DI & SI CUZ WE WILL CHANGE THIM                                                     
+          PUSH SI                                                                                                            
+          ADD SI,DX           ;ADD THE INDEX OF MINUMUM ELEMENT TO SI TO GET THE ADDRESS OF MINMUM ELEMENT                                                                                                                     
+          CMP AL,[SI]       ;COMPARE THE MINMUM ELEMENT TO  THE CURRENT ELEMENT                                                                                                                                                
+          JNG @NOT_SWAP____ ;IF THE MINMUM ELEMENT IS STILL SMALLER JUMP TO @NOT_SWAP____                                      
+          POP SI            ;RETURN THE ORIGNAL SI FROM STACK                                                                 
+          SUB DI,SI         ;SUBTRACT THE ADDRESS OF THE CURRENT ELEMENT FROM THE SI ADDRESS TO GET THE CURRENT ELEMENT INDEX   
+          MOV DX,DI         ;PUT THE INDEX OF THE MINIMUM ADDRESS INTO DX                                                     
+          POP DI              ;RETURN THE ORIGNAL DI FROM STACK                                                               
+          JMP @NOT_SWAP4    ;JMP TO @NOT_SWAP4                                                                                
+          @NOT_SWAP____:     
+          POP SI            
+          POP DI                                                                                                             
+          @NOT_SWAP4:                                                                                                        
+          INC DI            ;THIS LABLE IF THE MINMUM ELEMENT IS STILL SMALLER                                               
+          DEC BX            ;THEN REURN THE OERIGNAL SI & DI                                                                 
+       JNZ @INNER_LOOP4     ;JMP IF BX!=0                                                                                                 
+       MOV DI,SI                                                                                                             
+       ADD SI,DX            ;INCREMENT DI TO COMPARE THE NEXT ELEMENT                                                        
+       MOV AL,[SI]          ;THIS BLOCK OF CODE IS TO EXCHANGE THE MINIMUM VALUE TO THE CORRECT INDEX                                                                                                 
+       XCHG [DI],AL                                                                                             
+       MOV [SI],AL                                                                                                           
+       MOV SI,DI                                                                                                             
+       INC SI
+      ;======================================
+        POP BX
+        PUSH SI
+        PUSH CX
+        PUSH AX
+        MOV CX,BX        
+        CALL NEW_LINE 
+                                 
+        MOV SI,0                         
+        PRINT_SORTED_ARRAY____:       ;THIS BLOCK OF CODE TO PRINT ARRAY AFTER EACH OUTER LOOP              
+            MOV AH,2
+            MOV DL,ARR[SI]
+            INT 21H
+            MOV DL,' '
+            INT 21H
+            INC SI
+            LOOP PRINT_SORTED_ARRAY____
+        POP AX
+        POP CX
+        POP SI
+	 ;==========================================      
+	 
+	 
