@@ -728,3 +728,97 @@ QUICK_DESCENDING_SORT PROC
 
 
         ;-----------------------------------------
+
+
+
+;PARTITION(A, LEFT, RIGHT)
+        ;    x = A[RIGHT]
+        ;    i = LEFT - 1
+        ;    for j = LEFT to RIGHT-1
+        ;        if A[j] <= x
+        ;            i = i + 1
+        ;            exchange A[i] with A[j]
+        ;    exchange A[i+1] with A[RIGHT]
+        ;    return i+1 
+        partition2 proc
+
+                   ;GET X = ARR[ right ].
+            mov  si, offset arr
+            mov  al, right
+            mov  ah,0
+            add  si, ax
+            mov  al, [ si ]       
+            mov  x,  al                 ;X = ARR[ right ].
+
+            ;GET I = left - 1.
+            mov  al, left
+            mov  i,  al
+            dec  i
+
+            ;INITIALISE J WITH left.
+            mov  al, left
+            mov  j,  al
+
+            ;LOOP J FROM left TO Right-1.
+            for_j2:
+
+                ;GET ARR[ J ].
+                mov  si, offset ARR
+                mov  al, j
+                mov  ah,0
+                add  si, ax
+                mov  al, [ si ]         ;AX = ARR[ J ]
+
+                ;COMPARE X WITH A[ J ].
+                cmp  x, al
+                jnl   bigger3             ;IF A[ J ] >= X, NO SWAP
+
+                ;GET I = I + 1.
+                inc  i
+                
+                ;GET ARR[ I ].
+                mov  di, offset ARR
+                mov  cl, i
+                mov  ch,0
+                add  di, cx
+                mov  cl, [ di ]         ;CX = ARR[ I ].
+
+                ;EXCHANGE ARR[ I ] WITH ARR[ J ].
+                mov  [ di ], al
+                mov  [ si ], cl
+            
+                ;GET NEXT J.
+                bigger3:
+
+                    inc  j              ;J = J + 1.
+                    mov  al, right
+                    cmp  j,  al         ;COMPARE J WITH right.
+                    jl   for_j2          ;IF J = right-1 CONTINUE LOOP.
+
+            ;GET ARR[ i+1 ].
+            inc  i
+            mov  si, offset ARR
+            mov  al, i
+            mov  ah,0
+            add  si, ax
+            mov  al, [ si ]             ;AX = ARR[ I+1 ].
+
+            ;GET ARR[ Right ].
+            mov  di, offset ARR
+            mov  cl, right
+            mov  ch,0
+            add  di, cx
+            mov  cl, [ di ]             ;CX = ARR[ Right ].
+
+            ;EXCHANGE ARR[ I+1 ] WITH ARR[ Right ].
+            mov  [ di ], al
+            mov  [ si ], cl  
+
+            ;RETURN I+1.
+            mov  al, i
+            ret
+
+        partition2 endp   
+     
+
+;====================================  
