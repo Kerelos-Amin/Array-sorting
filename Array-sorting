@@ -822,3 +822,45 @@ QUICK_DESCENDING_SORT PROC
      
 
 ;====================================  
+
+
+
+ ;====================================
+ 
+PRINT_SPACE PROC 
+ 
+    MOV AH,2
+    MOV DX,' '     ;DISPLAY SPACE
+    INT 21H   
+
+
+RET   ;RETURN TO RHE CALLING PROCEDURE
+PRINT_SPACE ENDP 
+
+;===============================
+  
+;====================================
+ 
+NEW_LINE PROC
+ 
+   MOV AH,2
+   MOV DL,0DH  ;CARRIAGE RETURN IN ASCII TABLE
+   INT 21H
+   MOV DL,0AH  ;LINE FEED IN ASCII TABLE
+   INT 21H    
+ 
+RET   ;RETURN TO RHE CALLING PROCEDURE
+NEW_LINE ENDP 
+
+;===============================
+
+    INVALID:
+    CALL NEW_LINE
+    MOV AH,9
+    LEA DX,MESSAGE4
+    INT 21H
+    JMP EXIT
+ 
+END MAIN  
+
+;=============================================================================== 
