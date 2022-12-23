@@ -7,14 +7,13 @@ MESSAGE1 DB 'ENTER UP TO 10 ELEMENTS : $'
 MESSAGE2 DB 'AFTER SORTING : $'
 MESSAGE3 DB 'PRESS : 1-FOR DESCENDING ORDER  2-FOR ASCENDING ORDER  $'
 MESSAGE4 DB 'INVALID NUMBER $'
-MESSAGE5 DB 'PRESS : 1-FOR BUBBLE SORTING  2-FOR SELECTION SORTING $'
+MESSAGE5 DB 'PRESS : 1-FOR BUBBLE SORTING  2-FOR SELECTION SORTING 
 MESSAGE6 DB 'YOU MUST ENTER ELEMENTS FIRST $'
+ 
  
 ARR DB 10 dup (0) 
  
  
-
-
 .CODE  
   
  
@@ -22,23 +21,19 @@ MAIN PROC
     MOV AX,@DATA
     MOV DS,AX 
        
-    CALL NEW_LINE   
-    
+    CALL NEW_LINE
     MOV AH,9       ;DISPLAY MESSAGE
     lea DX,MESSAGE1
-    INT 21H 
-    
-    MOV CX,0
-     
+    INT 21H
+    MOV CX,0 
     ;FILLING ARRAY
     MOV AH,1 ;FIRST INPUT
     INT 21H
-    
     MOV SI,0
     WHILE_:
         CMP AL,0DH      ;COMPARE INPUT WITH CR ;ENTER BUTTON
         JE END_WHILE    ;IF EQUAL JMP TO END_WHILE
-        MOV ARR[SI],AL  ;MOVE INPUT INTO ARRAY
+        MOV ARR[SI],AL ;MOVE INPUT INTO ARRAY
         INC SI          ;SI+=1
         INC CX
         CMP CX,10
@@ -49,13 +44,14 @@ MAIN PROC
                 
     JMP WHILE_          ;JMP WHILE_ TO CONTINUE ENTER THE INPUTS
     END_WHILE:
-    CALL NEW_LINE  
-    
+    CALL NEW_LINE
     JCXZ NO_INPUTS_MESSAGE ;IF CX == 0 JMP NO_INPUTS_MESSAGE LABLE (THIS CONDITION IF NO INPUTS ENTERED) 
     
     LEA SI,ARR ;OFFSET OF ARRAY INTO SI
     MOV BX,CX 
-
+    
+    MOV right,Cl ;mov the number of elements into thr r variable
+    DEC right    ;decrement to get index of the last(right) element of the array
     
     PUSH CX ;push number of elements
  ;==================================================   
@@ -73,10 +69,10 @@ MAIN PROC
     CMP AL,1      ;COMPARE INPUT WITH 1
     JB INVALID 
     JE T1    ;IF EQUAL JMP TO T1 WHICH CONTAIN THE CODE OF THE BUBBLE SORT 
-    CMP AL,2
-    JA INVALID      ;COMPARE INPUT WITH 2
+    CMP AL,2      ;COMPARE INPUT WITH 2
+    JA INVALID   ;
     JE T2    ;IF EQUAL JMP TO T2 WHICH CONTAIN THE CODE OF THE SELECTION SORT
-    
+  
  ;======================================================= 
   
  ;==================================================   
@@ -133,11 +129,9 @@ MAIN PROC
     JMP PRINT_ARRAY    ;AFTER THE CALL OF THE PROCEDURE JMP TO PRINT_ARRAY
 
 
+ ;==================================================   
+   
  
-    
-    
- ;=======================================================
-      
     ;PRINT AFTER SORTING
     PRINT_ARRAY:
     POP CX         ;POP THE NUMBER OF ELEMENTS FROM THE STACK INTO CX THAT U PUSHED IT ABOVE
@@ -192,7 +186,7 @@ BUBBLE_ASCENDING_SORT PROC
   JCXZ BUBBLESORT_END     ;IF THERE IS ONE ELEMENT IN THE ARRAY EXIT THE PROCEDURE 
                       
   @OUTER_LOOP1:
- 
+      PUSH DX             ; PUSH INTO STACK FOR LATER USAGE. 
       MOV BX,CX           ;THE COUNTER OF INNER LOOP IS THE SAME AS OUTER LOOP         
       MOV SI,AX           ;SET SI=AX (IN EACH LOOP IN OUTER LOOP SET SI THE BEGINNIG OFFSET OF THE AARAY)
       MOV DI,AX           ;SET DI=AX
@@ -210,7 +204,24 @@ BUBBLE_ASCENDING_SORT PROC
       JNZ @INNER_LOOP1 ;JMP IF BX!=0  
       ;IF BX==0 THIS MEANS THE INNER LOOP HAS ENDED 
       ;======================================
-
+        POP DX      ;GET THE NUMBER OF ELEMENTS 
+        PUSH CX     ;PUSH THE OUTER LOOP COUNTER FOR LATER USAGE
+        PUSH AX     ;PUSH AX CUZ IT CONTAIN THE ADDRES OF THE ARRAY       
+        MOV CX,DX   ;LOAD NEW COUNTER TO PRINT THE ELEMENTS IN THE ARRAY 
+        CALL NEW_LINE                       
+        PUSH DX
+        MOV SI,0
+        PRINT_SORTED_ARRAY_:
+            MOV AH,2
+            MOV DL,ARR[SI]
+            INT 21H                             ;THIS BLOCK OF CODE TO PRINT ARRAY AFTER EACH OUTER LOOP
+            MOV DL,' '
+            INT 21H
+            INC SI
+            LOOP PRINT_SORTED_ARRAY_
+        POP DX
+        POP AX
+        POP CX ;GET BACK THE COUNTER OF THE OUTER LOOP 
         ;====================================       
       LOOP @OUTER_LOOP1  ;IF CX !=0 LOOP THE OUTER LOOP AGAIN TILL IT EQUAL 0
   
@@ -225,11 +236,8 @@ BUBBLE_ASCENDING_SORT PROC
   RET   ;RETURN TO RHE CALLING PROCEDURE
   BUBBLE_ASCENDING_SORT ENDP
 
-   
-    
 ;======================================================    
    
-
 BUBBLE_DESCENDING_SORT PROC
    ;THIS PROCEDURE WILL SORT THE ARRAY IN DESCENDING ORDER
    ;INPUT : SI=OFFSET ADDRESS OF THE ARRAY
@@ -248,7 +256,7 @@ BUBBLE_DESCENDING_SORT PROC
   DEC CX
   JCXZ BUBBLESORT2_END                         
   @OUTER_LOOP2:
-
+    PUSH DX
       MOV BX,CX          
       MOV SI,AX          
       MOV DI,AX          
@@ -263,10 +271,31 @@ BUBBLE_DESCENDING_SORT PROC
           INC SI 
           INC DI
           DEC BX
-      JNZ @INNER_LOOP2   
+      JNZ @INNER_LOOP2 
+      ;======================================
+        POP DX
+        PUSH CX
+        PUSH AX                
+        MOV CX,DX
+        CALL NEW_LINE                                  
+        PUSH DX
+        MOV SI,0
+        PRINT_SORTED_ARRAY__:
+            MOV AH,2
+            MOV DL,ARR[SI]
+            INT 21H
+            MOV DL,' '
+            INT 21H
+            INC SI
+            LOOP PRINT_SORTED_ARRAY__
+        POP DX
+        POP AX
+        POP CX
+      ;==========================================       
        
       LOOP @OUTER_LOOP2
 
+   
   BUBBLESORT2_END:
   POP SI
   POP DI
@@ -292,6 +321,7 @@ SELECTION_ASCENDING_SORT PROC
    DEC CX
    JCXZ SELECTION_END      ;JMP IF CX == 0, THIS FOR CONDITION IF THERE IS ONLY 1 ELEMENT IN ARRAY THEN END SORT                  
    @OUTER_LOOP3:
+       PUSH BX             ;PUSH FOR LATER USAGE
        MOV BX,CX           ;SET BX=CX
        MOV DI,SI
        INC DI              ;ADDRESS OF THE NEXT ELEMENT
@@ -331,7 +361,29 @@ SELECTION_ASCENDING_SORT PROC
        INC  SI             ;INC SI TO GET THE NEXT RLEMENT IN OUTER LOOP
       ;====================================== 
       
-     
+        POP BX     ;GET THE NUMBER OF ELEMENTS OF THE ARRAY 
+        PUSH SI
+        PUSH CX    ;SAVE THESE REGISTERS FOR LATER USAGE
+        PUSH AX 
+        
+        MOV CX,BX   ;LOAD NEW COUNTER TO PRINT THE ELEMENTS IN THE ARRAY
+        CALL NEW_LINE                                                             
+
+        MOV SI,0                   
+        PRINT_SORTED_ARRAY___:
+            MOV AH,2
+            MOV DL,ARR[SI]            ;(THIS BLOCK OF CODE TO PRINT ARRAY AFTER EACH OUTER LOOP)
+            INT 21H
+            MOV DL,' '
+            INT 21H
+            INC SI
+            LOOP PRINT_SORTED_ARRAY___ 
+            
+            
+        POP AX
+        POP CX      ;GET BACK REGISTERS FROM STACK
+        POP SI
+      ;==========================================        
        
        LOOP @OUTER_LOOP3  ;LOOP THE OUTER LOOP IF CX !=0 
    
@@ -363,7 +415,8 @@ SELECTION_DESCENDING_SORT PROC
   DEC CX                    
                             
   JCXZ SELECTION2_END       ;JMP IF CX == 0, THIS FOR CONDITION IF THERE IS ONLY 1 ELEMENT IN ARRAY THEN END SORT              
-  @OUTER_LOOP4:                                                                                                              
+  @OUTER_LOOP4:
+       PUSH BX                                                                                                              
        MOV BX,CX            ;SET BX=CX                                                                                       
        MOV DI,SI                                                                                                             
        INC DI               ;ADDRESS OF THE NEXT ELEMENT                                                                     
@@ -397,7 +450,26 @@ SELECTION_DESCENDING_SORT PROC
        MOV SI,DI                                                                                                             
        INC SI
       ;======================================
-                                                                                                                     
+        POP BX
+        PUSH SI
+        PUSH CX
+        PUSH AX
+        MOV CX,BX        
+        CALL NEW_LINE 
+                                 
+        MOV SI,0                         
+        PRINT_SORTED_ARRAY____:       ;THIS BLOCK OF CODE TO PRINT ARRAY AFTER EACH OUTER LOOP              
+            MOV AH,2
+            MOV DL,ARR[SI]
+            INT 21H
+            MOV DL,' '
+            INT 21H
+            INC SI
+            LOOP PRINT_SORTED_ARRAY____
+        POP AX
+        POP CX
+        POP SI
+      ;==========================================                                                                                                                       
       LOOP @OUTER_LOOP4                             
 
    
@@ -412,12 +484,6 @@ SELECTION_DESCENDING_SORT PROC
   SELECTION_DESCENDING_SORT ENDP
 
 ;====================================  
-
-  
-
-
-
- ;====================================
  
 PRINT_SPACE PROC 
  
