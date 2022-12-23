@@ -821,11 +821,6 @@ QUICK_DESCENDING_SORT PROC
 
         partition2 endp   
      
-
-;====================================  
-
-
-
  ;====================================
  
 PRINT_SPACE PROC 
@@ -837,8 +832,6 @@ PRINT_SPACE PROC
 
 RET   ;RETURN TO RHE CALLING PROCEDURE
 PRINT_SPACE ENDP 
-
-;===============================
   
 ;====================================
  
