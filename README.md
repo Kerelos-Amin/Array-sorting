@@ -2,7 +2,7 @@
 > The project is about sorting Arrays in according to ascending and descending orders using three different algorithms two simple sorting Techniques and one advanced sorting > technique  The code can operate in 8086 processor which has 16-bit Architecture  and use model small and stack. firstly, the program asks the user to enter the number of elements, > then the program asks him to enter the values of numbers. then the program asks the user to choose the sorting method from three different algorithms (bubble sort , selection sort, quick sort )
 
 # Project Advantages
-+ Three types of sorting algorithms.
++ two types of sorting algorithms.
 + Choosing the method of sorting is based on the user desire.
 + The number of values is variable and determined by the user.
 + Handling for inputs such that the user can only enters Hexa Numbers.
